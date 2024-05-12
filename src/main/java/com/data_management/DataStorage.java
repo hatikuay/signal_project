@@ -76,6 +76,16 @@ public class DataStorage {
     }
 
     /**
+     * 
+     * @param patientId
+     * @return
+     */
+
+    public Patient getPatient(int patientId) {
+        return (Patient) patientMap.get(patientId);
+    }
+
+    /**
      * The main method for the DataStorage class.
      * Initializes the system, reads data into storage, and continuously monitors
      * and evaluates patient data.

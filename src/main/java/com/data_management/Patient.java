@@ -13,6 +13,25 @@ import java.util.stream.Collectors;
 public class Patient {
     private int patientId;
     private List<PatientRecord> patientRecords;
+    private double currentHeartRate;
+
+    
+    /**
+     * 
+     * @return
+     */
+    public double getCurrentHeartRate() {
+        return currentHeartRate;
+    }
+
+
+    /**
+     * 
+     * @param currentHeartRate
+     */
+    public void setCurrentHeartRate(double currentHeartRate) {
+        this.currentHeartRate = currentHeartRate;
+    }
 
     /**
      * Constructs a new Patient with a specified ID.

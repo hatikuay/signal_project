@@ -1,7 +1,11 @@
 package com.alerts;
 
+import java.util.List;
+
 import com.data_management.DataStorage;
 import com.data_management.Patient;
+import com.data_management.PatientRecord;
+
 
 /**
  * Monitors patient data and generates alerts when predefined conditions are
@@ -29,7 +33,11 @@ public class AlertGenerator {
      * @param patient the patient data to evaluate for alert conditions
      */
     public void evaluateData(Patient patient) {
-        if(patient.getRecords(0, 0))
+        List<PatientRecord> recentRecords = patient.getRecords(System.currentTimeMillis()-3600000, System.currentTimeMillis());
+        for (PatientRecord patientRecord : recentRecords) {
+            if("HeartRate".equals(patientRecord.getRecordType()) && patientRecord.getMeasurementValue() > )
+            
+        }
     }
 
     /**
