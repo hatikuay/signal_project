@@ -1,11 +1,12 @@
 package com.alerts;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.data_management.DataStorage;
 import com.data_management.Patient;
 import com.data_management.PatientRecord;
-
 
 /**
  * Monitors patient data and generates alerts when predefined conditions are
@@ -15,6 +16,7 @@ import com.data_management.PatientRecord;
  */
 public class AlertGenerator {
     private DataStorage dataStorage;
+    private Map<Integer, Map<String, Double>> patientAlertThresholds;
 
     /**
      * Constructs an AlertGenerator with specified DataStorage.
@@ -24,6 +26,7 @@ public class AlertGenerator {
      */
     public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage; // Ensured consistent spacing around "="
+        this.patientAlertThresholds = new HashMap<>();
     }
 
     /**
@@ -33,11 +36,22 @@ public class AlertGenerator {
      * @param patient the patient data to evaluate for alert conditions
      */
     public void evaluateData(Patient patient) {
-        List<PatientRecord> recentRecords = patient.getRecords(System.currentTimeMillis()-3600000, System.currentTimeMillis());
+        List<PatientRecord> recentRecords = patient.getRecords(System.currentTimeMillis() - 3600000,
+                System.currentTimeMillis());
+        Map<String, Double> thresholds = patientAlertThresholds.get(patient.getPatientId());
         for (PatientRecord patientRecord : recentRecords) {
-            if("HeartRate".equals(patientRecord.getRecordType()) && patientRecord.getMeasurementValue() > )
-            
+            double threshold = thresholds.get(patientRecord.getRecordType());
+            if ("HeartRate".equals(patientRecord.getRecordType()) && patientRecord.getMeasurementValue() > threshold) {
+                triggerAlert(new Alert(patient.getPatientId(), "High Heart Rate", System.currentTimeMillis()));
+            }
         }
+    }
+
+    public void setThreshold(int patientId, String condition, double value) {
+        if (!patientAlertThresholds.containsKey(patientId)) {
+            patientAlertThresholds.put(patientId, new HashMap<>());
+        }
+        patientAlertThresholds.get(patientId).put(condition, value);
     }
 
     /**
