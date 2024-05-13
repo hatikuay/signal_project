@@ -27,7 +27,7 @@ public class Alert {
      * @param timestamp The timestamp when the alert was generated, typically the
      *                  time when the condition was detected.
      */
-    public Alert(String patientId, String condition, long timestamp) {
+    public Alert(int patientId, String condition, long timestamp) {
         this.patientId = patientId;
         this.condition = condition;
         this.timestamp = timestamp;
@@ -38,7 +38,7 @@ public class Alert {
      * 
      * @return the patient ID.
      */
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
