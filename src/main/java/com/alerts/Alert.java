@@ -7,8 +7,15 @@ package com.alerts;
  * specific health condition that triggered the alert, and the time the alert
  * was generated.
  */
+/**
+ * Represents an alert that is generated when a patient's health data crosses
+ * predefined thresholds.
+ * This class stores details about the alert such as the patient's ID, the
+ * specific health condition that triggered the alert, and the time the alert
+ * was generated.
+ */
 public class Alert {
-    private String patientId;
+    private int patientId;
     private String condition;
     private long timestamp;
 
@@ -40,10 +47,20 @@ public class Alert {
      * 
      * @return the condition description.
      */
+    /**
+     * Returns the condition that triggered this alert.
+     * 
+     * @return the condition description.
+     */
     public String getCondition() {
         return condition;
     }
 
+    /**
+     * Returns the timestamp when the alert was generated.
+     * 
+     * @return the timestamp as a long.
+     */
     /**
      * Returns the timestamp when the alert was generated.
      * 

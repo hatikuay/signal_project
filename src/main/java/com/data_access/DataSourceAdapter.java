@@ -1,8 +1,9 @@
 package com.data_access;
 
-public class DataSourceAdapter {
-    public void processAndStoreData(String parsedData) {
-        // ***** */
-    }
+import com.data_management.PatientData;
+
+public interface DataSourceAdapter {
+
+    void storeData(PatientData data);
 
 }

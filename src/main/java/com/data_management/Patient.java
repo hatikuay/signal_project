@@ -15,7 +15,6 @@ public class Patient {
     private List<PatientRecord> patientRecords;
     private double currentHeartRate;
 
-    
     /**
      * 
      * @return
@@ -24,6 +23,13 @@ public class Patient {
         return currentHeartRate;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public int getPatientId() {
+        return patientId;
+    }
 
     /**
      * 
