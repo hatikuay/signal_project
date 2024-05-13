@@ -1,11 +1,25 @@
 package com.data_access;
 
-public class TCPDataListener extends DataListener {
+public class TCPDataListener implements DataListener {
+
+    private int port;
 
     @Override
-    public void listenForData() {
+    public void startListening() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listenForData'");
+        throw new UnsupportedOperationException("Unimplemented method 'startListening'");
     }
-    
+
+    @Override
+    public void stopListening() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'stopListening'");
+    }
+
+    @Override
+    public void onDataReceived(String rawData) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'onDataReceived'");
+    }
+
 }

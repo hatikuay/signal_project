@@ -1,5 +1,9 @@
 package com.data_access;
 
-public abstract class DataListener {
-    public abstract void listenForData();
+public interface DataListener {
+    void startListening();
+
+    void stopListening();
+
+    void onDataReceived(String rawData);
 }
