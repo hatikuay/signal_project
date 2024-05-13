@@ -1,23 +1,28 @@
 package com.data_management;
 
+import java.util.Map;
+
 public class PatientData {
     private int patientId;
-    private double currentHeartRate;
+    private Map<String, Double> metrics;
+    private long timestamp;
 
-    public PatientData(int patientId) {
+    public PatientData(int patientId, Map<String, Double> metrics, long timestamp) {
         this.patientId = patientId;
+        this.metrics = metrics;
+        this.timestamp = timestamp;
     }
 
     public int getPatientId() {
         return patientId;
     }
 
-    public double getCurrentHeartRate() {
-        return currentHeartRate;
+    public Map<String, Double> getMetrics() {
+        return metrics;
     }
 
-    public void setCurrentHeartRate(double currentHeartRate) {
-        this.currentHeartRate = currentHeartRate;
+    public long getTimestamp() {
+        return timestamp;
     }
 
 }

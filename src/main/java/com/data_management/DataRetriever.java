@@ -8,13 +8,7 @@ public class DataRetriever {
     }
 
     public PatientData retrievePatientData(int patientId) {
-        Patient patient = dataStorage.getPatient(patientId);
-        if (patient != null) {
-            PatientData patientData = new PatientData(patientId);
-            patientData.setCurrentHeartRate(patient.getCurrentHeartRate());
-            return patientData;
-        }
-        return null;
+        return dataStorage.retrieveData(patientId);
     }
 
 }
