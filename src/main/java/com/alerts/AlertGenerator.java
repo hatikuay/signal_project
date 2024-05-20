@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.data_management.DataStorage;
-import com.data_management.Patient;
-import com.data_management.PatientRecord;
+import com.data_storage.DataStorage;
+import com.data_storage.Patient;
+import com.identification.PatientRecord;
 
 /**
  * Monitors patient data and generates alerts when predefined conditions are

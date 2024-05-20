@@ -2,9 +2,9 @@ package com.data_access;
 
 import java.io.IOException;
 
-import com.data_management.PatientRecord;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.identification.PatientRecord;
 
 public class JsonDataParser implements DataParser {
 

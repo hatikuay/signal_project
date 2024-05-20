@@ -1,7 +1,7 @@
 package com.data_access;
 
 
-import com.data_management.PatientRecord;
+import com.identification.PatientRecord;
 
 public class CsvDataParser implements DataParser {
 
