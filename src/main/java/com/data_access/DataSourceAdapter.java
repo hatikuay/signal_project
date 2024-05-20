@@ -1,9 +1,28 @@
 package com.data_access;
 
-import com.identification.PatientRecord;
+import java.io.IOException;
 
-public interface DataSourceAdapter {
+import com.data_storage.DataStorage;
+import com.data_storage.PatientData;
 
-    void storeData(PatientRecord data);
+public class DataSourceAdapter {
 
+    private DataStorage dataStorage;
+    private DataParser dataParser;
+
+    public DataSourceAdapter(DataStorage dataStorage, DataParser dataParser) {
+        this.dataStorage = dataStorage;
+        this.dataParser = dataParser;
+    }
+
+    public void processData(String rawData) {
+        try {
+            PatientData patientData = dataParser.parse(rawData);
+            dataStorage.storeData(patientData);
+            System.out.println("Data successfully processed and stored for patient ID: " + patientData.getPatientId());
+        } catch (IOException e) {
+            System.err.println("Error parsing data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

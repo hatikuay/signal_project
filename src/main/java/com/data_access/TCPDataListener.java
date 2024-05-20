@@ -14,10 +14,12 @@ public class TCPDataListener implements DataListener {
     private Socket clientSocket;
     private ExecutorService executor;
     private boolean isRunning;
+    private DataSourceAdapter dataSourceAdapter;
 
-    public TCPDataListener(String host, int port) {
+    public TCPDataListener(String host, int port, DataSourceAdapter dataSourceAdapter) {
         this.host = host;
         this.port = port;
+        this.dataSourceAdapter = dataSourceAdapter;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class TCPDataListener implements DataListener {
 
     @Override
     public void onDataReceived(String rawData) {
-        System.out.println("Data received over TCP: " + rawData);
+        dataSourceAdapter.processData(rawData);
     }
 
     private void readData() {
