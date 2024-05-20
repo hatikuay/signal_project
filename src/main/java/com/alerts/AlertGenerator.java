@@ -4,18 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.data_management.DataStorageOld;
+import com.data_management.DataStorage;
 import com.data_management.Patient;
 import com.data_management.PatientRecord;
 
 /**
  * Monitors patient data and generates alerts when predefined conditions are
  * met.
- * Relies on {@link DataStorageOld} to access and evaluate patient data against
+ * Relies on {@link DataStorage} to access and evaluate patient data against
  * health criteria.
  */
 public class AlertGenerator {
-    private DataStorageOld dataStorage;
+    private DataStorage dataStorage;
     private Map<Integer, Map<String, Double>> patientAlertThresholds;
 
     /**
@@ -24,7 +24,7 @@ public class AlertGenerator {
      *
      * @param dataStorage the data storage system providing access to patient data
      */
-    public AlertGenerator(DataStorageOld dataStorage) {
+    public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage; // Ensured consistent spacing around "="
         this.patientAlertThresholds = new HashMap<>();
     }

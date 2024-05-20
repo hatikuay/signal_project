@@ -7,7 +7,7 @@ public class DataRetriever {
         this.dataStorage = dataStorage;
     }
 
-    public PatientData retrievePatientData(int patientId) {
+    public PatientRecord retrievePatientData(int patientId) {
         return dataStorage.retrieveData(patientId);
     }
 

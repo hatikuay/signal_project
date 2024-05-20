@@ -1,9 +1,9 @@
 package com.identifycation;
 
-import com.data_management.PatientData;
+import com.data_management.PatientRecord;
 
 public class PatientIdentifier {
-    public String idetifyPatient(PatientData incomingData) {
+    public String idetifyPatient(PatientRecord incomingData) {
         return "";
     }
 
