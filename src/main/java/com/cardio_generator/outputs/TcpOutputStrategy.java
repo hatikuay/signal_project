@@ -61,4 +61,20 @@ public class TcpOutputStrategy implements OutputStrategy {
             out.println(message);
         }
     }
+
+    public void stop() {
+        try {
+            if (out != null) {
+                out.close();
+            }
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

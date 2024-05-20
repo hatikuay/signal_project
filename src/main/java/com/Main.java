@@ -1,17 +1,17 @@
 package com;
 
-import com.data_access.FileDataListener;
-import com.data_access.TCPDataListener;
+import com.data_access.WebSocketDataListener;
 
 public class Main {
     public static void main(String[] args) {
-        String directoryPath = "data";  // specify the directory to be monitored
-        FileDataListener fileDataListener = new FileDataListener(directoryPath);
-        TCPDataListener tcpDataListener = new TCPDataListener(5000);
-        // Start listening for file changes
-        //fileDataListener.startListening();
-        tcpDataListener.startListening();
-        
+        int port = 8080;
+        String serverUri = "ws://localhost:" + port;
+
+
+        // Start the WebSocket listener as a client
+        WebSocketDataListener listener = new WebSocketDataListener(serverUri);
+        listener.startListening();
+
+   
     }
 }
-

@@ -27,6 +27,10 @@ class DataStorageTest {
          */
     }
 
-    
+    @Test
+    public void sampleTestCases() {
+        /*assertEquals(1.0, Kata.findUniq(new double[] { 0, 1, 0 }));
+        assertEquals(0, Kata.findUniq(new double[] { 0, 1, 1, 1, 1, 1 }));*/
+    }
 
 }

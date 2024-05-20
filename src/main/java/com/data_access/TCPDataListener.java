@@ -3,37 +3,35 @@ package com.data_access;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class TCPDataListener implements DataListener {
 
+    private String host;
     private int port;
-    private ServerSocket serverSocket;
+    private Socket clientSocket;
     private ExecutorService executor;
     private boolean isRunning;
 
-    public TCPDataListener(int port) {
+    public TCPDataListener(String host, int port) {
+        this.host = host;
         this.port = port;
     }
 
     @Override
     public void startListening() {
         try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("TCP Server started on port: " + port);
+            clientSocket = new Socket(host, port);
+            System.out.println("Connected to TCP server at " + host + ":" + port);
             isRunning = true;
-            executor = Executors.newFixedThreadPool(10);
-            executor.submit(this::acceptConnections);
-
+            executor = Executors.newSingleThreadExecutor();
+            executor.submit(this::readData);
         } catch (IOException e) {
-            System.out.println("Error starting TCP server on port: " + port);
+            System.err.println("Error connecting to TCP server at " + host + ":" + port);
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -41,67 +39,37 @@ public class TCPDataListener implements DataListener {
         isRunning = false;
         if (executor != null) {
             executor.shutdown();
-            try {
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-            }
         }
-        if (serverSocket != null) {
+        if (clientSocket != null) {
             try {
-                serverSocket.close();
-
+                clientSocket.close();
             } catch (IOException e) {
-                System.out.println("Error closing server socket");
+                System.err.println("Error closing client socket");
                 e.printStackTrace();
             }
-
         }
-
     }
 
     @Override
     public void onDataReceived(String rawData) {
         System.out.println("Data received over TCP: " + rawData);
-
     }
 
-    private void acceptConnections() {
-        while (isRunning) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Client connected: " + clientSocket.getInetAddress());
-                executor.submit(() -> handleClient(clientSocket));
-
-            } catch (IOException e) {
-                if (isRunning) {
-                    System.out.println("Error accepting client connection");
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-
-    private void handleClient(Socket clientSocket) {
+    private void readData() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             String data;
-            while ((data = in.readLine()) != null) {
+            while (isRunning && (data = in.readLine()) != null) {
                 onDataReceived(data);
             }
-
         } catch (IOException e) {
-            System.out.println("Error reading from client socket");
+            System.err.println("Error reading from server");
             e.printStackTrace();
         } finally {
             try {
                 clientSocket.close();
-                System.out.println("Client connection closed: " + clientSocket.getInetAddress());
-
+                System.out.println("Connection to server closed");
             } catch (IOException e) {
-                System.out.println("Error closing client socket");
+                System.err.println("Error closing client socket");
                 e.printStackTrace();
             }
         }

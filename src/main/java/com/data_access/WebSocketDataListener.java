@@ -32,13 +32,11 @@ public class WebSocketDataListener implements DataListener {
         public void onMessage(String message) {
           System.out.println("Received message: " + message);
           onDataReceived(message);
-
         }
 
         @Override
         public void onClose(int code, String reason, boolean remote) {
           System.out.println("WebSocket connection closed: " + reason);
-
         }
 
         @Override
@@ -46,14 +44,11 @@ public class WebSocketDataListener implements DataListener {
           System.out.println("Error with WebSocket connection: " + ex.getMessage());
           ex.printStackTrace();
         }
-
       };
-
     } catch (URISyntaxException e) {
       System.out.println("Invalid WebSocket URI: " + e.getMessage());
       e.printStackTrace();
     }
-
   }
 
   @Override
@@ -87,7 +82,5 @@ public class WebSocketDataListener implements DataListener {
   @Override
   public void onDataReceived(String rawData) {
     System.out.println("Data received: " + rawData);
-
   }
-
 }
