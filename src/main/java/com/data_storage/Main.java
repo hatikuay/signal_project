@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Main class to demonstrate the usage of DataStorage and PatientData classes.
+ */
 public class Main {
-    
 
     public static void main(String[] args) {
         // Example usage
@@ -36,11 +38,5 @@ public class Main {
         } catch (UnauthorizedAccessException e) {
             System.out.println(e.getMessage());
         }
-    }
-}
-
-class UnauthorizedAccessException extends Exception {
-    public UnauthorizedAccessException(String message) {
-        super(message);
     }
 }
