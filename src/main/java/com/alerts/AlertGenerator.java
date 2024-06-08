@@ -1,13 +1,13 @@
 package com.alerts;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.data_storage.DataStorage;
 import com.data_storage.PatientData;
 
 public class AlertGenerator {
+
     private DataStorage dataStorage;
     private Map<Integer, Map<String, Double>> patientAlertThresholds;
 
@@ -18,7 +18,9 @@ public class AlertGenerator {
 
     public void evaluateData(PatientData patient) {
         int patientId = Integer.parseInt(patient.getPatientId());
-        if (!patientAlertThresholds.containsKey(patientId)) return;
+        if (!patientAlertThresholds.containsKey(patientId)) {
+            return;
+        }
 
         Map<String, Double> thresholds = patientAlertThresholds.get(patientId);
         for (Map.Entry<String, Double> entry : patient.getMetrics().entrySet()) {
