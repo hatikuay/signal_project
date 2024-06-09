@@ -1,38 +1,37 @@
 package com.cardio_generator;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.cardio_generator.generators.AlertGenerator;
+import com.alerts.Alert;
+import com.alerts.AlertGenerator;
+import com.cardio_generator.generators.BloodLevelsDataGenerator;
 import com.cardio_generator.generators.BloodPressureDataGenerator;
 import com.cardio_generator.generators.BloodSaturationDataGenerator;
-import com.cardio_generator.generators.BloodLevelsDataGenerator;
 import com.cardio_generator.generators.ECGDataGenerator;
 import com.cardio_generator.outputs.ConsoleOutputStrategy;
 import com.cardio_generator.outputs.FileOutputStrategy;
 import com.cardio_generator.outputs.OutputStrategy;
 import com.cardio_generator.outputs.TcpOutputStrategy;
 import com.cardio_generator.outputs.WebSocketOutputStrategy;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.data_storage.DataStorage;
 
 /**
  * Simulates health data generation for multiple patients using various data
- * generators.
- * This simulator is capable of using different output strategies to handle the
- * generated data.
- * It supports console, file, WebSocket, and TCP output based on command line
- * arguments.
+ * generators. This simulator is capable of using different output strategies to
+ * handle the generated data. It supports console, file, WebSocket, and TCP
+ * output based on command line arguments.
  *
  * <p>
  * Usage: java HealthDataSimulator [options]
@@ -43,8 +42,7 @@ import java.util.logging.Logger;
  * <li>--patient-count <count>: Specify the number of patients to simulate data
  * for (default: 50).
  * <li>--output <type>: Define the output method. Options include 'console',
- * 'file:<directory>',
- * 'websocket:<port>', 'tcp:<port>'.
+ * 'file:<directory>', 'websocket:<port>', 'tcp:<port>'.
  * </ul>
  * </p>
  */
@@ -55,13 +53,20 @@ public class HealthDataSimulator {
     private static ScheduledExecutorService scheduler;
     private static OutputStrategy outputStrategy = new ConsoleOutputStrategy(); // Default output strategy
     private static final Random random = new Random();
+    private static AlertGenerator alertGenerator; // Make AlertGenerator static for easy access
+
+    public HealthDataSimulator(DataStorage dataStorage) {
+        alertGenerator = new AlertGenerator(dataStorage);
+    }
 
     /**
-     * Main entry point for the Health Data Simulator. Parses command line arguments
-     * and sets up the simulation.
+     * Main entry point for the Health Data Simulator. Parses command line
+     * arguments and sets up the simulation.
      *
-     * @param args command line arguments used to customize the simulation settings
-     * @throws IOException if an I/O error occurs when setting up output directories
+     * @param args command line arguments used to customize the simulation
+     * settings
+     * @throws IOException if an I/O error occurs when setting up output
+     * directories
      */
     public static void main(String[] args) throws IOException {
         parseArguments(args);
@@ -93,7 +98,7 @@ public class HealthDataSimulator {
      *
      * @param args array of command line arguments
      * @throws IOException if an I/O error occurs, particularly when creating
-     *                     directories
+     * directories
      */
     private static void parseArguments(String[] args) throws IOException {
         for (int i = 0; i < args.length; i++) {
@@ -199,25 +204,36 @@ public class HealthDataSimulator {
         BloodSaturationDataGenerator bloodSaturationDataGenerator = new BloodSaturationDataGenerator(patientCount);
         BloodPressureDataGenerator bloodPressureDataGenerator = new BloodPressureDataGenerator(patientCount);
         BloodLevelsDataGenerator bloodLevelsDataGenerator = new BloodLevelsDataGenerator(patientCount);
-        AlertGenerator alertGenerator = new AlertGenerator(patientCount);
+        //alertGenerator = new AlertGenerator(new DataStorage());
 
         for (int patientId : patientIds) {
             scheduleTask(() -> ecgDataGenerator.generate(patientId, outputStrategy), 1, TimeUnit.SECONDS);
             scheduleTask(() -> bloodSaturationDataGenerator.generate(patientId, outputStrategy), 1, TimeUnit.SECONDS);
             scheduleTask(() -> bloodPressureDataGenerator.generate(patientId, outputStrategy), 1, TimeUnit.MINUTES);
             scheduleTask(() -> bloodLevelsDataGenerator.generate(patientId, outputStrategy), 2, TimeUnit.MINUTES);
-            scheduleTask(() -> alertGenerator.generate(patientId, outputStrategy), 20, TimeUnit.SECONDS);
+            //scheduleTask(() -> alertGenerator.generate(patientId, outputStrategy), 20, TimeUnit.SECONDS);
         }
     }
 
     /**
      * Schedules a repeating task with a fixed delay.
      *
-     * @param task     the task to schedule
-     * @param period   the period between successive executions
+     * @param task the task to schedule
+     * @param period the period between successive executions
      * @param timeUnit the time unit of the period
      */
     private static void scheduleTask(Runnable task, long period, TimeUnit timeUnit) {
         scheduler.scheduleAtFixedRate(task, random.nextInt(5), period, timeUnit);
+    }
+
+    /**
+     * Simulates a manual alert trigger for testing purposes.
+     *
+     * @param patientId The ID of the patient.
+     * @param condition The condition triggering the alert.
+     */
+    public static void simulateManualAlert(String patientId, String condition) {
+        Alert alert = new Alert(patientId, condition, System.currentTimeMillis());
+        alertGenerator.triggerAlert(alert); // Directly use AlertGenerator to trigger an alert
     }
 }
