@@ -17,10 +17,9 @@ public class AlertGenerator {
         this.patientAlertThresholds = new HashMap<>();
     }
 
-    @SuppressWarnings("unlikely-arg-type")
     public void evaluateData(PatientData patient) {
         String patientId = patient.getPatientId();
-        System.out.println("Evaluating data for paient: " + patientId + " " + patient.getMetrics());
+        System.out.println("Evaluating data for patient: " + patientId + " " + patient.getMetrics());
         checkBloodPressureAlerts(patientId, patient.getMetrics());
         checkBloodSaturationAlerts(patientId, patient.getMetrics());
         checkECGDataAlerts(patientId, patient.getMetrics());
@@ -28,14 +27,12 @@ public class AlertGenerator {
     }
 
     public void setThreshold(int patientId, String condition, double value) {
-        if (!patientAlertThresholds.containsKey(patientId)) {
-            patientAlertThresholds.put(patientId, new HashMap<>());
-        }
-        patientAlertThresholds.get(patientId).put(condition, value);
+        patientAlertThresholds
+            .computeIfAbsent(patientId, k -> new HashMap<>())
+            .put(condition, value);
     }
 
     private void checkBloodPressureAlerts(String patientId, Map<String, Double> metrics) {
-
         Double systolic = metrics.get("SystolicPressure");
         Double diastolic = metrics.get("DiastolicPressure");
 
@@ -47,29 +44,11 @@ public class AlertGenerator {
             triggerAlert(new Alert(patientId, "Critical Blood Pressure", System.currentTimeMillis()));
         }
 
-        List<Double> systolicReadings = dataStorage.getRecentReadings(patientId, "SystolicPressure", 3);
-        List<Double> diastolicReadings = dataStorage.getRecentReadings(patientId, "DiastolicPressure", 3);
-
-        if (systolicReadings.size() == 3) {
-            if (isIncreasingTrend(systolicReadings, 10)) {
-                triggerAlert(new Alert(patientId, "Blood Pressure Increasing Trend", System.currentTimeMillis()));
-            } else if (isDecreasingTrend(systolicReadings, 10)) {
-                triggerAlert(new Alert(patientId, "Blood Pressure Decreasing Trend", System.currentTimeMillis()));
-            }
-        }
-
-        if (diastolicReadings.size() == 3) {
-            if (isIncreasingTrend(diastolicReadings, 10)) {
-                triggerAlert(new Alert(patientId, "Blood Pressure Increasing Trend", System.currentTimeMillis()));
-            } else if (isDecreasingTrend(diastolicReadings, 10)) {
-                triggerAlert(new Alert(patientId, "Blood Pressure Decreasing Trend", System.currentTimeMillis()));
-            }
-        }
-
+        checkTrends(patientId, "SystolicPressure", systolic, "Blood Pressure Increasing Trend", "Blood Pressure Decreasing Trend");
+        checkTrends(patientId, "DiastolicPressure", diastolic, "Blood Pressure Increasing Trend", "Blood Pressure Decreasing Trend");
     }
 
     private void checkBloodSaturationAlerts(String patientId, Map<String, Double> metrics) {
-
         Double saturation = metrics.get("Saturation");
         if (saturation == null) {
             return;
@@ -79,10 +58,6 @@ public class AlertGenerator {
             triggerAlert(new Alert(patientId, "Low Blood Oxygen Saturation", System.currentTimeMillis()));
         }
 
-        /*Trigger Condition:
-            ● Test for Low Saturation: Ensure an alert is triggered when saturation falls below 92%.
-            ● Test for Rapid Drop: Ensure an alert is triggered when there is a drop of 5% or more
-            within 10 minutes.*/
         List<Double> saturationReadings = dataStorage.getRecentReadings(patientId, "Saturation", 10);
         if (saturationReadings.size() >= 2) {
             double latest = saturationReadings.get(saturationReadings.size() - 1);
@@ -91,11 +66,9 @@ public class AlertGenerator {
                 triggerAlert(new Alert(patientId, "Rapid Drop in Blood Oxygen Saturation", System.currentTimeMillis()));
             }
         }
-
     }
 
     private void checkHypotensiveHypoxemiaAlerts(String patientId, Map<String, Double> metrics) {
-
         Double systolic = metrics.get("SystolicPressure");
         Double saturation = metrics.get("Saturation");
 
@@ -106,22 +79,35 @@ public class AlertGenerator {
         if (systolic < 90 && saturation < 92) {
             triggerAlert(new Alert(patientId, "Hypotensive Hypoxemia", System.currentTimeMillis()));
         }
-
     }
 
     private void checkECGDataAlerts(String patientId, Map<String, Double> metrics) {
-
         Double ecg = metrics.get("ECG");
         if (ecg == null) {
             return;
         }
-        List<Double> ecgReadings = dataStorage.getRecentReadings(patientId, "ECG", 5);
-        double average = ecgReadings.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
 
+        List<Double> ecgReadings = dataStorage.getRecentReadings(patientId, "ECG", 5);
+        if (ecgReadings.size() < 5) {
+            return;
+        }
+
+        double average = ecgReadings.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
         if (ecg > average * 1.5) {
             triggerAlert(new Alert(patientId, "Abnormal ECG Data", System.currentTimeMillis()));
         }
+    }
 
+    private void checkTrends(String patientId, String metric, double value, String increasingAlert, String decreasingAlert) {
+        List<Double> readings = dataStorage.getRecentReadings(patientId, metric, 3);
+
+        if (readings.size() == 3) {
+            if (isIncreasingTrend(readings, 10)) {
+                triggerAlert(new Alert(patientId, increasingAlert, System.currentTimeMillis()));
+            } else if (isDecreasingTrend(readings, 10)) {
+                triggerAlert(new Alert(patientId, decreasingAlert, System.currentTimeMillis()));
+            }
+        }
     }
 
     private boolean isIncreasingTrend(List<Double> readings, double threshold) {
